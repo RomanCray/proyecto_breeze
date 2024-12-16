@@ -38,6 +38,16 @@ class LoginForm extends Form
             ]);
         }
 
+        $user = Auth::user();
+        if ($user && $user->status !== 1) {
+            // Si el usuario no está activo, cierra la sesión y lanza una excepción
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'form.email' => 'Tu cuenta está desactivada.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 
